@@ -20,7 +20,7 @@ class Trello {
             } else {
                 const cards = this.get_each_cards(res);
                 const json = line_sender.make_message_json(cards);
-                line_sender.push_message(json);
+                line_sender.pushMessage(json);
             }
         });
     }

@@ -34,7 +34,7 @@ class LineSender {
             };
         });
     }
-    push_message(push_message_json) {
+    pushMessage(push_message_json) {
         console.log(push_message_json)
         this.requestPost(push_message_json);
     }
@@ -111,7 +111,7 @@ const quick_reply_json = {
                         'type': 'action',
                         'action': {
                             'type': 'postback',
-                            'data': 'action=japanese_food&itemid=111',
+                            'data': 'action=to_do_today',
                             'label': '今日すること',
                             'text': '今日すること'
                         }
@@ -120,7 +120,7 @@ const quick_reply_json = {
                         'type': 'action',
                         'action': {
                             'type': 'postback',
-                            'data': 'action=chinese_food&itemid=111',
+                            'data': 'action=to_do_tomorrow',
                             'label': '明日すること',
                             'text': '明日すること'
                         }
