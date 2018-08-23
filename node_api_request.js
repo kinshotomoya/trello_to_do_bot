@@ -113,7 +113,7 @@ const quick_reply_json = {
                             'type': 'postback',
                             'data': 'action=to_do_today',
                             'label': '今日すること',
-                            'text': '今日すること'
+                            'displayText': '今日すること'
                         }
                     },
                     {
@@ -122,7 +122,7 @@ const quick_reply_json = {
                             'type': 'postback',
                             'data': 'action=to_do_tomorrow',
                             'label': '明日すること',
-                            'text': '明日すること'
+                            'displayText': '明日すること'
                         }
                     }
                 ]
