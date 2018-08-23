@@ -7,13 +7,19 @@ const app = express();
 
 const GET_BOARD_URL = `https://trello.com/1/members/user96518825/boards?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}&fields=name`;
 const GET_LIST_URL = `https://trello.com/1/boards/${process.env.TRELLO_BOARD_ID}/lists?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}&fields=name`
-const GET_CARDS_URL = `https://trello.com/1/lists/${process.env.TRELLO_TO_DO_LIST_ID}/cards?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}&fields=name`
-
+const GET_TO_DO_TODAY_CARDS_URL = `https://trello.com/1/lists/${process.env.TRELLO_TO_DO_LIST_ID}/cards?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}&fields=name`
+const GET_TO_DO_TOMORROW_CARDS_URL = `https://trello.com/1/lists/${process.env.TRELLO_TO_DO_TOMORROW_LIST_ID}/cards?key=${process.env.TRELLO_API_KEY}&token=${process.env.TRELLO_TOKEN}&fields=name`
 
 class Trello {
-    get_and_push_trello_cards() {
+    get_and_push_trello_cards(action_name) {
+        var cards_url;
+        if (action_name == 'to_do_today') {
+            cards_url = GET_TO_DO_TODAY_CARDS_URL;
+        } else if (action_name == 'to_do_tomorrow') {
+            cards_url = GET_TO_DO_TOMORROW_CARDS_URL;
+        };
         request.get({
-            uri: GET_CARDS_URL
+            uri: cards_url
         }, (err, req, res) => {
             if (err) {
                 console.log(err);
@@ -63,4 +69,6 @@ class Trello {
     };
 };
 
+var trello = new Trello();
+console.log(trello.get_trello_list());
 module.exports = Trello;
