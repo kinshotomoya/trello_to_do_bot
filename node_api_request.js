@@ -79,7 +79,7 @@ class LineSender {
         return push_message_json;
     }
 
-    make_message_array(cards) {
+    make_message_array(cards) { // TODO: リストのカードが６個以上の時には、送れない
         var message_array = [];
         cards.forEach(card => {
             var hash = {

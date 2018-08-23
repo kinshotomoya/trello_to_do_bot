@@ -25,7 +25,6 @@ router.post('/webhook', function(req, res, next) {
       // 明日することを取得
       action_name = event.postback.data.match('to_do_tomorrow')[0]
       trello.get_and_push_trello_cards(action_name);
-
     }
   }
 });

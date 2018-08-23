@@ -15,5 +15,17 @@
     "morgan": "~1.9.0",
     "request": "^2.88.0",
     "sync-request": "^6.0.0"
+  },
+  "now": {
+    "alias": "trello-to-do-bot",
+    "env": {
+      "LINE_CHANNEL_SECRET_TOKE": "@line-secret-channel-token",
+      "LINE_CHANNEL__TOKE": "@line-channel-token",
+      "TRELLO_TOKEN": "@trello-token",
+      "TRELLO_API_KEY": "@trello-api_key",
+      "TRELLO_BOARD_ID": "@trello-board-id",
+      "TRELLO_TO_DO_LIST_ID": "@trello-to-do-list-id",
+      "TRELLO_TO_DO_TOMORROW_LIST_ID": "@trello-to-do-tomorrow-list-id"
+    }
   }
 }

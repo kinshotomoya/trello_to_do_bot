@@ -68,7 +68,4 @@ class Trello {
         });
     };
 };
-
-var trello = new Trello();
-console.log(trello.get_trello_list());
 module.exports = Trello;
