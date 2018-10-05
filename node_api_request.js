@@ -1,9 +1,11 @@
 const request = require('request')
+const axios = require('axios');
 const get_trello_card = require('./trello');
 require('dotenv').config();
 const express = require('express');
 const app = express();
 
+const BASE_URL = 'https://api.line.me/v2/bot/message'
 const URL = 'https://api.line.me/v2/bot/message/multicast';
 const HEADERS = { 
     'Content-Type': 'application/json',
@@ -20,19 +22,36 @@ const GET_CARDS_URL = `https://trello.com/1/lists/${process.env.TRELLO_TO_DO_LIS
 // -------------LINE JSON ----------------------
 
 class LineSender {
-    requestPost(send_json) {
-        request.post({
-            uri: URL,
+    async requestPost(send_json) {
+        console.log(send_json)
+        try {
+            let axios_instance = axios.create({
+                url: URL,
+                headers: HEADERS,
+            });
+            let res = await axios_instance.post(URL, send_json);
+            console.log('送信しました');
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
+    getContent(messageId) {
+        console.log(`https://api.line.me/v2/bot/message/${messageId}/content`)
+
+        request.get({
+            uri: `https://api.line.me/v2/bot/message/${messageId}/content`,
             headers: HEADERS,
-            json: send_json,
         }, (err, req, res) => {
             if (err) {
                 console.log(err);
             } else {
-                console.log('message送信完了しました。')
-                // console.log(req)
-            };
-        });
+                // 画像を取得
+                var buf = new Buffer(res);
+                var string = buf.toString('base64');
+                console.log(string)
+            }
+        })
     }
     pushMessage(push_message_json) {
         console.log(push_message_json)

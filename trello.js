@@ -1,4 +1,5 @@
 const request = require('request')
+const axios = require('axios');
 require('dotenv').config();
 const express = require('express');
 const LineSender = require('./node_api_request');
@@ -17,24 +18,32 @@ class Trello {
             cards_url = GET_TO_DO_TODAY_CARDS_URL;
         } else if (action_name == 'to_do_tomorrow') {
             cards_url = GET_TO_DO_TOMORROW_CARDS_URL;
-        };
-        request.get({
-            uri: cards_url
-        }, (err, req, res) => {
-            if (err) {
-                console.log(err);
-            } else {
-                const cards = this.get_each_cards(res);
-                const json = line_sender.make_message_json(cards);
-                line_sender.pushMessage(json);
-            }
-        });
+				};
+			  axios.get(cards_url).then((res) => {
+					let cards = this.get_each_cards(res.data);
+					let json = line_sender.make_message_json(cards);
+					this.push_card_and_quick_reply(json)
+				})
     }
 
-    get_each_cards(res) {
-        var parsed_response = JSON.parse(res);
+    promise_push_message(json) {
+			return new Promise((resolve, reject) => {
+				line_sender.pushMessage(json)
+				resolve("push message done");
+			});
+		}
+		
+		async push_card_and_quick_reply(json) {
+			console.log('start')
+			let res = await this.promise_push_message(json);
+			console.log(res)
+			line_sender.pushQuickReply(line_sender.make_quick_reply_json());
+			console.log('finish')
+		}
+
+    get_each_cards(card_data) {
         var array = [];
-        parsed_response.forEach(card => {
+        card_data.forEach(card => {
             array.push(card.name);
         });
         // console.log(array);  //取得したcardのname（タイトル）が格納されている
