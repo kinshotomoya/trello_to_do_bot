@@ -34,11 +34,7 @@ class Trello {
 		}
 		
 		async push_card_and_quick_reply(json) {
-			console.log('start')
 			let res = await this.promise_push_message(json);
-			console.log(res)
-			line_sender.pushQuickReply(line_sender.make_quick_reply_json());
-			console.log('finish')
 		}
 
     get_each_cards(card_data) {

@@ -10,30 +10,28 @@ router.post('/webhook', (req, res, next) => {
   console.log(event)
   if (event.type == 'follow') {
     // まずfollwoしてくれたら、quick_replyを表示する
-    line_sender.pushQuickReply(line_sender.make_quick_reply_json());
-    return
+    line_sender.requestPost(line_sender.make_first_quick_reply_json(), false);
   } else {
     if (event.message) {
-      if (event.message.text == "教えて") {
-        line_sender.pushQuickReply(line_sender.make_quick_reply_json());
-      } else if (event.message.type == 'image') {
+      if (event.message.type == 'image') {
         // 画像を取得する処理をする)
         line_sender.getContent(event.message.id);
-        return
       } else {
-        line_sender.pushMessage(line_sender.make_message_json(['何言ってるの？？']));
+        line_sender.requestPost(line_sender.make_message_json(['ごめんね。返信できないのmm']), true);
       }
     } else if (event.postback) {
       var trello = new Trello();
       var action_name;
-      if (event.postback.data.match('to_do_today')) {
-        // 今日することを取得
-        action_name = event.postback.data.match('to_do_today')[0]
-        trello.get_and_push_trello_cards(action_name);
-      } else if (event.postback.data.match('to_do_tomorrow')) {
-        // 明日することを取得
-        action_name = event.postback.data.match('to_do_tomorrow')[0]
-        trello.get_and_push_trello_cards(action_name);
+      if (event.postback.data.match('read_to_do')) {
+        // read_todo_quick_reply_jsonを表示
+        line_sender.requestPost(line_sender.make_read_quick_reply_json(), false);
+        // action_name = event.postback.data.match('to_do_today')[0]
+        // trello.get_and_push_trello_cards(action_name);
+      } else if (event.postback.data.match('write_to_do')) {
+        // write_todo_quick_reply_jsonを表示
+        line_sender.requestPost(line_sender.make_write_quick_reply_json(), false);
+        // action_name = event.postback.data.match('to_do_tomorrow')[0]
+        // trello.get_and_push_trello_cards(action_name);
       }
     }
   }

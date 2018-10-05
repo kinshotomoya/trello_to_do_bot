@@ -22,14 +22,18 @@ const GET_CARDS_URL = `https://trello.com/1/lists/${process.env.TRELLO_TO_DO_LIS
 // -------------LINE JSON ----------------------
 
 class LineSender {
-    async requestPost(send_json) {
-        console.log(send_json)
+    async requestPost(send_json, bool_back_to_the_first_quick_reply) {
         try {
             let axios_instance = axios.create({
                 url: URL,
                 headers: HEADERS,
             });
             let res = await axios_instance.post(URL, send_json);
+            // TODO: 最後には、再び「TODOを見る」「TODOを書き込む」のquick_replyを表示する
+            if (bool_back_to_the_first_quick_reply) {
+            //   最初のquick_replyに戻る必要がある場合にだけ、呼び出す
+              let res2 = await axios_instance.post(URL, this.make_first_quick_reply_json())
+            }
             console.log('送信しました');
         } catch(err) {
             console.log(err);
@@ -54,7 +58,6 @@ class LineSender {
         })
     }
     pushMessage(push_message_json) {
-        console.log(push_message_json)
         this.requestPost(push_message_json);
     }
     pushQuickReply(quick_reply_json) {
@@ -110,15 +113,23 @@ class LineSender {
         return message_array;
     }
 
-    make_quick_reply_json() {
-        return quick_reply_json;
+    make_first_quick_reply_json() {
+        return read_or_write_quick_reply_json
+    }
+
+    make_read_quick_reply_json() {
+        return read_todo_quick_reply_json;
+    }
+
+    make_write_quick_reply_json(){
+        return write_todo_quick_reply_json;
     }
 
 }
 
-
-
-const quick_reply_json = {
+// 最上位のquick_reply
+// 「TODOをみる」「TODOを書き込む」の２つを表示
+const read_or_write_quick_reply_json = {
     'to': USERLIST,
     'messages': [
         {
@@ -130,7 +141,41 @@ const quick_reply_json = {
                         'type': 'action',
                         'action': {
                             'type': 'postback',
-                            'data': 'action=to_do_today',
+                            'data': 'action=read_to_do',
+                            'label': 'TODOをみる',
+                            'displayText': 'TODOをみる'
+                        }
+                    },
+                    {
+                        'type': 'action',
+                        'action': {
+                            'type': 'postback',
+                            'data': 'action=write_to_do',
+                            'label': 'TODOを書き込む',
+                            'displayText': 'TODOを書き込む'
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+
+// 「TODOを見る」をクリックした後に表示されるquick_reply
+// 「今日すること」「明日すること」「今週すること」「すること」の４つ
+const read_todo_quick_reply_json = {
+    'to': USERLIST,
+    'messages': [
+        {
+            'type': 'text',
+            'text': '何を知りたいですか？',
+            'quickReply': {
+                'items': [
+                    {
+                        'type': 'action',
+                        'action': {
+                            'type': 'postback',
+                            'data': 'action=read_to_do_today',
                             'label': '今日すること',
                             'displayText': '今日すること'
                         }
@@ -139,14 +184,85 @@ const quick_reply_json = {
                         'type': 'action',
                         'action': {
                             'type': 'postback',
-                            'data': 'action=to_do_tomorrow',
+                            'data': 'action=read_to_do_tomorrow',
                             'label': '明日すること',
                             'displayText': '明日すること'
+                        }
+                    },
+                    {
+                        'type': 'action',
+                        'action': {
+                            'type': 'postback',
+                            'data': 'action=read_to_do_weekly',
+                            'label': '今週すること',
+                            'displayText': '今週すること'
+                        }
+                    },
+                    {
+                        'type': 'action',
+                        'action': {
+                            'type': 'postback',
+                            'data': 'action=read_to_do',
+                            'label': 'すること',
+                            'displayText': 'すること'
                         }
                     }
                 ]
             }
         }    
+    ]
+}
+
+// 「TODOを書き込む」をクリックした際に表示される
+// 「今日すること」「明日すること」「今週すること」「すること」の４つ
+// postbackのdataがread_todo_quick_reply_jsonとは違う
+const write_todo_quick_reply_json = {
+    'to': USERLIST,
+    'messages': [
+        {
+            'type': 'text',
+            'text': '何を知りたいですか？',
+            'quickReply': {
+                'items': [
+                    {
+                        'type': 'action',
+                        'action': {
+                            'type': 'postback',
+                            'data': 'action=write_to_do_today',
+                            'label': '今日すること',
+                            'displayText': '今日すること'
+                        }
+                    },
+                    {
+                        'type': 'action',
+                        'action': {
+                            'type': 'postback',
+                            'data': 'action=write_to_do_tomorrow',
+                            'label': '明日すること',
+                            'displayText': '明日すること'
+                        }
+                    },
+                    {
+                        'type': 'action',
+                        'action': {
+                            'type': 'postback',
+                            'data': 'action=write_to_do_weekly',
+                            'label': '今週すること',
+                            'displayText': '今週すること'
+                        }
+                    },
+                    {
+                        'type': 'action',
+                        'action': {
+                            'type': 'postback',
+                            'data': 'action=write_to_do',
+                            'label': 'すること',
+                            'displayText': 'すること'
+                        }
+                    }
+                ]
+            }
+        }
     ]
 }
 
