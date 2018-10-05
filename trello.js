@@ -14,28 +14,22 @@ const GET_TO_DO_TOMORROW_CARDS_URL = `https://trello.com/1/lists/${process.env.T
 class Trello {
     get_and_push_trello_cards(action_name) {
         var cards_url;
-        if (action_name == 'to_do_today') {
+        if (action_name == 'read_to_do_today') {
             cards_url = GET_TO_DO_TODAY_CARDS_URL;
-        } else if (action_name == 'to_do_tomorrow') {
+        } else if (action_name == 'read_to_do_tomorrow') {
             cards_url = GET_TO_DO_TOMORROW_CARDS_URL;
-				};
-			  axios.get(cards_url).then((res) => {
-					let cards = this.get_each_cards(res.data);
-					let json = line_sender.make_message_json(cards);
-					this.push_card_and_quick_reply(json)
-				})
+		};
+        axios.get(cards_url).then((res) => {
+            let cards = this.get_each_cards(res.data);
+            if (cards.length === 0) {
+                // カードがない場合
+                line_sender.requestPost(line_sender.make_message_json(['カードが無いようです。']), true);
+            } else {
+                let json = line_sender.make_message_json(cards);
+                line_sender.requestPost(json, true);
+            }
+        });
     }
-
-    promise_push_message(json) {
-			return new Promise((resolve, reject) => {
-				line_sender.pushMessage(json)
-				resolve("push message done");
-			});
-		}
-		
-		async push_card_and_quick_reply(json) {
-			let res = await this.promise_push_message(json);
-		}
 
     get_each_cards(card_data) {
         var array = [];
