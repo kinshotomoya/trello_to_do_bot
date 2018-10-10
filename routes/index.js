@@ -6,9 +6,9 @@ const trello = new Trello();
 const LineSender = require('../node_api_request');
 const line_sender = new LineSender();
 
+
 router.post('/webhook', (req, res, next) => {
   const event = req.body.events[0]
-  console.log(event)
   if (event.type == 'follow') {
     // まずfollwoしてくれたら、quick_replyを表示する
     line_sender.requestPost(line_sender.make_first_quick_reply_json(), false);
@@ -21,9 +21,9 @@ router.post('/webhook', (req, res, next) => {
         line_sender.requestPost(line_sender.make_message_json(['ごめんね。返信できないのmm']), true);
       }
     } else if (event.postback) {
-      console.log(event.postback.data);
       var action_name;
       // TODO: あとで、リファクタリングする
+      // 具体的には、以下の処理をhandler.jsみたいなファイルに移動する
       if (event.postback.data === 'action=read_to_do') {
         // read_todo_quick_reply_jsonを表示
         line_sender.requestPost(line_sender.make_read_quick_reply_json(), false);
@@ -37,9 +37,11 @@ router.post('/webhook', (req, res, next) => {
         action_name = event.postback.data.match('read_to_do_tomorrow')[0]
         trello.get_and_push_trello_cards(action_name);
       } else if (event.postback.data === 'action=read_to_do_weekly') {
-
+        action_name = event.postback.data.match('read_to_do_weekly')[0]
+        trello.get_and_push_trello_cards(action_name);
       } else if (event.postback.data === 'action=read_to_do') {
-        
+        action_name = event.postback.data.match('read_to_do')[0]
+        trello.get_and_push_trello_cards(action_name);
       }
     }
   }
